@@ -16,8 +16,8 @@ String section = request.getParameter("section") != null ? request.getParameter(
 	
 	<%
 	switch(section){
-	case "insert_pizza":
-		%><%@include file="page/insert_pizza.jsp" %><%
+	case "insert_sales":
+		%><%@include file="page/insert_sales.jsp" %><%
 		break;
 	case "select_sales":
 		%><%@include file="page/select_sales.jsp" %><%
