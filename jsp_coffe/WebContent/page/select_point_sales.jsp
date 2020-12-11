@@ -4,14 +4,14 @@
 <%@ page import = "java.text.DecimalFormat" %>
 <table border="1">
   <tr>
-    <th>비번호</th>
-    <th>상품코드</th>
-    <th>판매날짜</th>
+    <th>매장코드</th>
+    <th>매장명</th>
+    <th>매장별 판매액</th>
   </tr>
 
 <%
 	
-	DecimalFormat formatter = new DecimalFormat("###,###");
+	DecimalFormat formatter2 = new DecimalFormat("###,###");
 	try {
 		Class.forName("oracle.jdbc.OracleDriver");
 		Connection conn = DriverManager.getConnection
@@ -23,15 +23,18 @@
 			System.out.println("Database Connect Fail!");
 		}
 		Statement stmt = conn.createStatement();
-		String query = "select salelist.saleno, salelist.pcode, salelist.saledate, salelist.scode, product.name, salelist.amount, salelist.amount * product.cost from tbl_product_01 PRODUCT, tbl_shop_01 SHOP, tbl_salelist_01 SALELIST "+
+		String query = "select shop.scode, shop.sname, sum(product.cost * salelist.amount) from tbl_product_01 PRODUCT, tbl_shop_01 SHOP, tbl_salelist_01 SALELIST "+
 				"WHERE salelist.pcode = product.pcode "+
-				"AND shop.scode = salelist.scode";
+				"AND shop.scode = salelist.scode "+
+				"GROUP BY shop.scode, shop.sname "+
+				"order by shop.scode";
 		ResultSet rs = stmt.executeQuery(query);
 		while (rs.next()) {
 				out.print("<tr>");
 				out.print("<td>"+ rs.getString(1) + "</td>");
 				out.print("<td>"+ rs.getString(2) + "</td>");
-				out.print("<td>"+ rs.getString(3).substring(0, 10) + "</td>");
+				out.print("<td>"+ formatter2.format(rs.getInt(3)) + "</td>");
+				out.print("</tr>");
 		}
 		stmt.close();
 		conn.close();
